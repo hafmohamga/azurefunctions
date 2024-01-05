@@ -6,13 +6,14 @@ pipeline {
     environment {
         HTTP_TRIGGER = "httptriggerfuncxxxx"  
         RES_GROUP = "rg_abdel_proc" 
-        APIM_NAME = "apimanagment1937xxx"
+        APIM_NAME = "apimvterramodules"
     }
     stages {
         stage('Checkout') {
             steps {
                 script {
-                    checkout scmGit(branches: [[name: '*/httpTrigger']], extensions: [], userRemoteConfigs: [[credentialsId: 'GitHubcredentials', url: 'https://github.com/Selmouni-Abdelilah/AzureFunctions']])
+                    //checkout scmGit(branches: [[name: '*/httpTrigger']], extensions: [], userRemoteConfigs: [[credentialsId: 'GitHubcredentials', url: 'https://github.com/Selmouni-Abdelilah/AzureFunctions']])
+                      checkout scmGit(branches: [[name: '*/httpTrigger']], extensions: [], userRemoteConfigs: [[credentialsId: 'hafeez-jenkins-token', url: 'https://github.com/hafmoham/azurefunctions']])
                 }
             }
         }
