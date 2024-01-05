@@ -3,7 +3,7 @@ data "azurerm_resource_group" "rg" {
 }
 
 resource "azurerm_storage_account" "storage" {
-  name                     = "httptrigger2023"
+  name                     = "functiontrigger2023"
   resource_group_name      = data.azurerm_resource_group.rg.name
   location                 = data.azurerm_resource_group.rg.location
   account_tier             = "Standard"
@@ -11,13 +11,30 @@ resource "azurerm_storage_account" "storage" {
 }
 
 resource "azurerm_service_plan" "svcplan" {
-  name                = "svcplanhttp"
+  name                = "example-app-service-plan"
   resource_group_name = data.azurerm_resource_group.rg.name
   location            = data.azurerm_resource_group.rg.location
   os_type             = "Linux"
   sku_name            = "Y1"
 }
 
+resource "azurerm_storage_queue" "queue" {
+  name                 = var.myqueue_name
+  storage_account_name = azurerm_storage_account.storage.name
+}
+
+resource "azurerm_storage_container" "container" {
+  name                  = "content"
+  storage_account_name  = azurerm_storage_account.storage.name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_blob" "blob" {
+  name                   = var.blob_name
+  storage_account_name   = azurerm_storage_account.storage.name
+  storage_container_name = azurerm_storage_container.container.name
+  type                   = "Block"
+}
 
 resource "azurerm_linux_function_app" "function" {
   name                = var.function_name
@@ -34,24 +51,3 @@ resource "azurerm_linux_function_app" "function" {
     }
   }
 }
-resource "azurerm_api_management" "apim" {
-  name                = var.apim_name
-  location            = data.azurerm_resource_group.rg.location
-  resource_group_name = data.azurerm_resource_group.rg.name
-  publisher_name      = "My Company"
-  publisher_email     = "company@terraform.io"
-
-  sku_name = "Developer_1"
-}
-
-resource "azurerm_api_management_custom_domain" "dns" {
-  api_management_id = azurerm_api_management.apim.id
-
-  gateway {
-    host_name    = "api.selmouni.website"
-  }
-}
-
-
-
-
